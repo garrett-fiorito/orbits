@@ -5,6 +5,8 @@
 #include <bn_fixed_point.h>
 #include <bn_sprite_ptr.h>
 #include <bn_vector.h>
+#include "movement.h"
+#include "Center.h"
 
 #include "bn_sprite_items_dot.h"
 #include "bn_sprite_items_square.h"
@@ -19,74 +21,6 @@ static constexpr int MAX_ORBITERS = 30;
 // Default starting posiiton and velocity for Orbiter
 static constexpr bn::fixed_point ORBITER_START_POSIITON = {0, 0};
 static constexpr bn::fixed_point ORBITER_START_VELOCITY = {0, 5};
-
-/**
- * Moves sprite up/down/left/right based on the d-pad being held.
- * 
- * Dimensions are moved independently, meaning that diagonal motion is faster than moving in one
- * dimension.
- * 
- * @param sprite the sprite to move
- * @param speed the speed at which to move the sprite in each dimension
- */
-void dPadMoveSprite(bn::sprite_ptr& sprite, bn::fixed speed) {
-    bn::fixed dx = 0;
-    bn::fixed dy = 0;
-
-    if(bn::keypad::left_held()) {
-        dx -= speed;
-    }
-    if(bn::keypad::right_held()) {
-        dx += speed;
-    }
-    if(bn::keypad::up_held()) {
-        dy -= speed;
-    }
-    if(bn::keypad::down_held()) {
-        dy += speed;
-    }
-
-    sprite.set_position(sprite.position() + bn::fixed_point(dx, dy));
-}
-
-/**
- * A center of mass to be orbited around. Position is controlled by the player.
- */
-class Center {
-    public:
-        /**
-         * Creates a new center.
-         * 
-         * @param starting_position the initial location of the center
-         * @param mass the mass of the center. The larger the value, the greater the attraction
-         * @param speed the speed at which the center moves when the d-pad is held
-         */
-        Center(bn::fixed_point starting_position, bn::fixed mass, bn::fixed speed) : 
-            _sprite(bn::sprite_items::square.create_sprite(starting_position)),
-            _mass(mass),
-            _speed(speed) {
-        }
-
-        /**
-         * Updates the location of the Center based on player direction with the d-pad.
-         */
-        void update() {
-            dPadMoveSprite(_sprite, _speed);
-        }
-
-        bn::fixed_point position() {
-            return _sprite.position();
-        }
-
-        bn::fixed mass() {
-            return _mass;
-        }
-
-    private:
-        bn::sprite_ptr _sprite;
-        bn::fixed _mass; // the mass of the center. The larger the value, the greater the attraction
-        bn::fixed _speed; //the speed at which the center moves when the d-pad is held
-};
 
 /**
  * An object that orbits around a center. Orbits using Hooke's law, as if attached by a 2D spring.
