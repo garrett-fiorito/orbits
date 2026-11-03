@@ -13,6 +13,9 @@ static constexpr int MAX_ORBITERS = 30;
 static constexpr bn::fixed_point ORBITER_START_POSIITON = {0, 0};
 static constexpr bn::fixed_point ORBITER_START_VELOCITY = {0, 5};
 
+// How much each L or R press changes the attraction.
+static constexpr bn::fixed MASS_STEP = 0.01;
+
 int main() {
     bn::core::init();
 
@@ -32,6 +35,14 @@ int main() {
             if(orbiters.size() > 0) {
                 orbiters.pop_back();
             }
+        }
+
+        // L decreases attraction; R increases attraction.
+        if(bn::keypad::l_pressed()) {
+            center.set_mass(center.mass() - MASS_STEP);
+        }
+        else if(bn::keypad::r_pressed()) {
+            center.set_mass(center.mass() + MASS_STEP);
         }
 
         center.update();

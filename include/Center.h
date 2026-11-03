@@ -24,6 +24,8 @@ class Center {
         bn::fixed_point position();
 
         bn::fixed mass();
+        // Changes the attraction to keep it within the allowed range
+        void set_mass(bn::fixed mass);
 
     private:
         bn::sprite_ptr _sprite;

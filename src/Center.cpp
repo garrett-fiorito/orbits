@@ -19,3 +19,17 @@ void Center::update() {
 bn::fixed Center::mass() {
     return _mass;
 }
+
+void Center::set_mass(bn::fixed mass) {
+    constexpr bn::fixed MIN_MASS = 0.01;
+    constexpr bn::fixed MAX_MASS = 0.10;
+
+    if(mass < MIN_MASS) {
+        mass = MIN_MASS;
+    }
+    else if(mass > MAX_MASS) {
+        mass = MAX_MASS;
+    }
+
+    _mass = mass;
+}
